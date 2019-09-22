@@ -1,0 +1,90 @@
+/* Your app styles here */
+body {
+    /*animation: 2s fadeIn;*/
+    animation-fill-mode: forwards;
+    background-image: url('../icon.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    font-size: 18px;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+p {
+    font-weight: bold !important;
+}
+
+.block-title {
+    color: #212121 !important;
+    font-size: 18px !important;
+    line-height: 20px !important;
+}
+
+.button {
+    font-size: 18px !important;
+    font-weight: bold !important;
+    height: 52px !important;
+    line-height: 52px !important;
+}
+
+.dialog {
+    color: #212121 !important;
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+.dialog-buttons {
+    height: 52px !important;
+}
+
+.dialog-button {
+    height: 40px !important;
+    color: #ff9800 !important;
+    font-size: 18px !important;
+    font-weight: normal !important;
+    line-height: 40px !important;
+}
+
+.dialog-button-bold {
+    font-weight: bold !important;
+}
+
+.list {
+    font-size: 20px !important;
+    font-weight: bold !important;
+}
+
+.list input[type='text'] {
+    font-size: 20px !important;
+}
+
+/* Customize Color Theme */
+.navbar {
+    background-color: #7a5040 !important;
+}
+
+.button {
+    background-color: #7a5040 !important;
+}
+
+.button.button-fill.button-big.button-raised {
+    background-color: #996655 !important;
+}
+
+.item-input-focused .item-input-wrap:after {
+    background-color: #5d4036 !important;
+}
+
+.dialog-button {
+    color: #b37c66 !important;
+}

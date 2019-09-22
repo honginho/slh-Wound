@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#996655">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <title>Wound</title>
+    <link rel="stylesheet" href="libs/framework7/css/framework7.min.css">
+    <link rel="stylesheet" href="css/icons.css">
+    <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Statusbar -->
+        <f7-statusbar></f7-statusbar>
+
+        <!-- Main View -->
+        <f7-view id="main-view" main :stack-pages="true">
+            <f7-page color-theme="orange">
+                <template v-if="isMounted">
+                    <f7-navbar title="傷口拍照程式">
+                        <f7-nav-right>
+                            <f7-button @click="userSetting">設定</f7-button>
+                        </f7-nav-right>
+                    </f7-navbar>
+                    <!-- <f7-navbar title="傷口拍照程式"></f7-navbar> -->
+
+                    <f7-block-title>護理人員登入</f7-block-title>
+                    <f7-list no-hairlines-md>
+                        <f7-list-item>
+                            <f7-input type="text" name="user" placeholder="請輸入身份證字號或是掃描QR Code" :value="user" @input="user=$event.target.value" clear-button autofocus></f7-input>
+                        </f7-list-item>
+                    </f7-list>
+                    <f7-block>
+                        <f7-row>
+                            <f7-col>
+                                <!-- In F7-v2, `large` button called `big` -->
+                                <f7-button big fill raised @click="scanQrcode">掃描 QR Code</f7-button>
+                            </f7-col>
+                            <f7-col>
+                                <f7-button big fill raised @click="userLogin">登入</f7-button>
+                            </f7-col>
+                        </f7-row>
+                    </f7-block>
+                </template>
+            </f7-page>
+        </f7-view>
+    </div>
+
+    <!-- Patient Login Template -->
+    <template id="user-setting">
+        <f7-page color-theme="orange">
+            <f7-navbar title="設定" back-link="Back"></f7-navbar>
+
+            <template v-if="isPass">
+                <f7-list no-hairlines-md>
+                    <f7-list-item>
+                        <f7-label>API</f7-label>
+                        <f7-input type="text" placeholder="無法取得API" :value="api" @input="api=$event.target.value" readonly></f7-input>
+                    </f7-list-item>
+                    <f7-list-item>
+                        <f7-label>密碼</f7-label>
+                        <f7-input type="text" placeholder="無法取得密碼" :value="password" @input="password=$event.target.value" readonly></f7-input>
+                    </f7-list-item>
+                </f7-list>
+
+                <f7-block>
+                    <f7-row>
+                        <f7-col>
+                            <f7-button big fill raised @click="changeApi">修改API</f7-button>
+                        </f7-col>
+                        <f7-col>
+                            <f7-button big fill raised @click="changePassword">修改密碼</f7-button>
+                        </f7-col>
+                    </f7-row>
+                </f7-block>
+            </template>
+        </f7-page>
+    </template>
+
+    <!-- Patient Login Template -->
+    <template id="patient-login">
+        <f7-page color-theme="orange">
+            <f7-navbar title="病人身份確認" back-link="Back"></f7-navbar>
+
+            <f7-block>
+                <p>你好，{{ username }} 護理人員。</p>
+            </f7-block>
+            <f7-block-title>病人身份確認</f7-block-title>
+            <f7-list no-hairlines-md>
+                <f7-list-item>
+                    <f7-input type="text" name="patient" placeholder="請輸入病歷號碼或是掃描QR Code" :value="patient" @input="patient=$event.target.value" clear-button autofocus></f7-input>
+                </f7-list-item>
+            </f7-list>
+            <f7-block>
+                <f7-row>
+                    <f7-col>
+                        <f7-button big fill raised @click="scanQrcode">掃描 QR Code</f7-button>
+                    </f7-col>
+                    <f7-col>
+                        <f7-button big fill raised @click="patientLogin">身份確認</f7-button>
+                    </f7-col>
+                </f7-row>
+            </f7-block>
+        </f7-page>
+    </template>
+
+    <!-- Photo Capture Template -->
+    <template id="photo-capture">
+        <f7-page color-theme="orange">
+            <f7-navbar title="拍照上傳">
+                <f7-nav-right>
+                    <f7-button @click="userLogout">登出</f7-button>
+                </f7-nav-right>
+            </f7-navbar>
+
+            <template v-if="username === 'superuserdo'">
+                <f7-popover class="popover-show-images">
+                    <f7-block>
+                        <p>結果：images<br><span>{{ images }}</span></p>
+                    </f7-block>
+                </f7-popover>
+                <f7-popover class="popover-show-toUpload">
+                    <f7-block>
+                        <p>結果：images_toUpload<br><span>{{ images_toUpload }}</span></p>
+                    </f7-block>
+                </f7-popover>
+                <f7-block>
+                    <f7-row>
+                        <f7-col>
+                            <f7-button big round raised popover-open=".popover-show-images">images</f7-button>
+                        </f7-col>
+                        <f7-col>
+                            <f7-button big round raised popover-open=".popover-show-toUpload">images_toUpload</f7-button>
+                        </f7-col>
+                    </f7-row>
+                </f7-block>
+
+                <f7-block>
+                    <p>upload error:</p>
+                    <p>{{ error }}</p>
+                </f7-block>
+            </template>
+
+            <f7-block>
+                <p>你好，{{ username }} 護理人員。</p>
+                <p>目前被拍照的病人是 {{ patient }}。</p>
+            </f7-block>
+
+            <f7-block-title>拍照傷口圖片並上傳</f7-block-title>
+            <f7-block id="photos-upload">
+                <f7-row>
+                    <f7-col>
+                        <f7-button big fill raised @click="photosTaking">拍照傷口</f7-button>
+                    </f7-col>
+                    <f7-col>
+                        <f7-button big fill raised @click="photosUpload">上傳圖片</f7-button>
+                    </f7-col>
+                </f7-row>
+            </f7-block>
+
+            <f7-block-title>所有圖片</f7-block-title>
+            <f7-list media-list v-for="(item, index) in images">
+                <f7-list-item swipeout @swipeout:deleted="dropImg(item.id)">
+                    <img slot="inner" :src="item.src" :alt="item.alt" width="100%" />
+                    <f7-swipeout-actions right>
+                        <f7-swipeout-button delete confirm-text="確定不要這張照片嗎？">刪除</f7-swipeout-button>
+                    </f7-swipeout-actions>
+                </f7-list-item>
+            </f7-list>
+        </f7-page>
+    </template>
+
+    <!-- Cordova -->
+    <script src="cordova.js"></script>
+
+    <!-- Framework7 library -->
+    <script src="libs/framework7/js/framework7.min.js"></script>
+
+    <!-- Vue -->
+    <script src="libs/vue/vue.min.js"></script>
+
+    <!-- Framework7-Vue plugin -->
+    <script src="libs/framework7-vue/framework7-vue.min.js"></script>
+
+    <!-- Your custom app scripts -->
+    <script src="js/app.js"></script>
+</body>
+</html>
